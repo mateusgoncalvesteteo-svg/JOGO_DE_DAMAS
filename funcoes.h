@@ -12,18 +12,22 @@ void inicializarTabuleiro();
 void mostrarTabuleiro(char player);
 
 // ===============================
-// JOGO (PASSO 1)//dividir em passos torna mais facil
+// JOGO (PASSO 1)
 // ===============================
 bool moverPeca(int x1, int y1, int x2, int y2, char jogadorAtual);
 bool jogoTerminou();
 
 // ===============================
-// UTILITÁRIO (futuro)
+// UTILITÁRIO (opcional mas recomendado)
 // ===============================
-int contarPecas(char peca);// mais pra frente eu faço (Mateus)
+int contarPecas(char peca);
 // ===============================
 // LIMPAR TELA
 // ===============================
 void limparTela();
+// ===============================
+// VALIDAÇAO DE INPUT
+// ===============================
+int lerCoordenada();
 
 #endif
