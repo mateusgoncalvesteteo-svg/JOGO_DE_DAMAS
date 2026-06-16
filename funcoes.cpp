@@ -3,7 +3,7 @@
 
 using namespace std;
 
-// ===============================
+// =============================== 
 // TABULEIRO GLOBAL (estado do jogo)
 // ===============================
 char tabuleiro[8][8];
