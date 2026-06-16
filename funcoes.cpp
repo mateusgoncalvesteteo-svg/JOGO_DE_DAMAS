@@ -7,7 +7,100 @@ using namespace std;
 // TABULEIRO GLOBAL (estado do jogo)
 // ===============================
 char tabuleiro[8][8];
+// ===============================
+// MENU
+// ===============================
+char menu()
+{
+    char opcao;
 
+    do
+    {
+        cout << "================================\n";
+        cout << "DAMAS\n";
+        cout << "================================\n";
+        cout << "1. PLAY\n";
+        cout << "Opcao: ";
+
+        cin >> opcao;
+
+        if(opcao != '1')
+        {
+            cout << "Apenas os numeros da lista!\n";
+        }
+
+    } while(opcao != '1');
+
+    return opcao;
+}
+
+// ===============================
+// JOGO
+// ===============================
+void jogar()
+{
+    char jogador1, jogador2;
+    char jogadorAtual;
+    bool jogoRodando = true;
+
+    cout << "Digite P para time preto ou B para time branco: ";
+    cin >> jogador1;
+
+    if (jogador1 == 'B')
+        jogador2 = 'P';
+    else
+        jogador2 = 'B';
+
+    jogadorAtual = 'B';
+
+    inicializarTabuleiro();
+
+    while (jogoRodando)
+    {
+        mostrarTabuleiro(jogadorAtual);
+
+        cout << "\nJogador atual: " << jogadorAtual << endl;
+
+        int x1, y1, x2, y2;
+
+        cout << "Linha origem: ";
+        cin >> x1;
+
+        cout << "Coluna origem: ";
+        cin >> y1;
+
+        cout << "Linha destino: ";
+        cin >> x2;
+
+        cout << "Coluna destino: ";
+        cin >> y2;
+
+        if(moverPeca(x1, y1, x2, y2, jogadorAtual))
+        {
+            cout << "Movimento realizado com sucesso!\n";
+        }
+        else
+        {
+            cout << "Movimento invalido!\n";
+        }
+
+        // troca de turno
+        if(jogadorAtual == 'B')
+            jogadorAtual = 'P';
+        else
+            jogadorAtual = 'B';
+
+        char sair;
+
+        cout << "\nContinuar jogando? (s/n): ";
+        cin >> sair;
+
+        if(sair == 'n')
+        {
+            jogoRodando = false;
+        }
+    }
+}
 // ===============================
 // INICIALIZA TABULEIRO
 // ===============================
