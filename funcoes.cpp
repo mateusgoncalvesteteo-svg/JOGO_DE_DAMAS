@@ -1,9 +1,10 @@
 #include <iostream>
+#include <limits>
 #include "funcoes.h"
 
 using namespace std;
 
-// =============================== 
+// ===============================
 // TABULEIRO GLOBAL (estado do jogo)
 // ===============================
 char tabuleiro[8][8];
@@ -68,16 +69,16 @@ void jogar()
         int x1, y1, x2, y2;
 
         cout << "Linha origem: ";
-        cin >> x1;
+        x1 = lerCoordenada();
 
         cout << "Coluna origem: ";
-        cin >> y1;
+        y1 = lerCoordenada();
 
         cout << "Linha destino: ";
-        cin >> x2;
+        x2 = lerCoordenada();
 
         cout << "Coluna destino: ";
-        cin >> y2;
+        y2 = lerCoordenada();
 
         if(moverPeca(x1, y1, x2, y2, jogadorAtual))
         {
@@ -209,4 +210,30 @@ void limparTela() {
 #else
     system("clear");
 #endif
+}
+// ===============================
+// LIMPAR TELA
+// ===============================
+int lerCoordenada() {
+    int num;
+
+    while (true)
+    {
+        if (cin >> num)
+        {
+            if(num >= 0 && num <= 7)
+            {
+                return num;
+            }
+
+            cout << "Digite um numero entre 0 e 7: ";
+        }
+        else
+        {
+            cout << "Digite apenas numeros: ";
+
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
 }
