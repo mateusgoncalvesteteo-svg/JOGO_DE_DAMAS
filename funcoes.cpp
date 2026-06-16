@@ -39,12 +39,16 @@ char menu()
 // ===============================
 void jogar()
 {
+    limparTela();
+
     char jogador1, jogador2;
     char jogadorAtual;
     bool jogoRodando = true;
 
     cout << "Digite P para time preto ou B para time branco: ";
     cin >> jogador1;
+
+    limparTela();
 
     if (jogador1 == 'B')
         jogador2 = 'P';
@@ -83,7 +87,7 @@ void jogar()
         {
             cout << "Movimento invalido!\n";
         }
-
+        
         // troca de turno
         if(jogadorAtual == 'B')
             jogadorAtual = 'P';
@@ -94,6 +98,8 @@ void jogar()
 
         cout << "\nContinuar jogando? (s/n): ";
         cin >> sair;
+
+        limparTela();
 
         if(sair == 'n')
         {
@@ -192,4 +198,15 @@ bool moverPeca(int x1, int y1, int x2, int y2, char jogadorAtual) {
     tabuleiro[x1][y1] = '.';
 
     return true;
+}
+// ===============================
+// LIMPAR TELA
+// ===============================
+void limparTela() {
+    // Compatibilidade entre Windows e Linux
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
 }
