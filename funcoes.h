@@ -21,5 +21,9 @@ bool jogoTerminou();
 // UTILITÁRIO (opcional mas recomendado)
 // ===============================
 int contarPecas(char peca);
+// ===============================
+// LIMPAR TELA
+// ===============================
+void limparTela();
 
 #endif
