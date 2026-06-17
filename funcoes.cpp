@@ -1,6 +1,6 @@
 #include <iostream>
 #include <limits>
-#include "funcoes.h" // MUDE AQUI SE O SEU ARQUIVO TIVER ACENTO (ex: "funções.h")
+#include "funcoes.h"
 
 using namespace std;
 
