@@ -1,13 +1,13 @@
 #include <iostream>
-#include "funcoes.h" 
+#include "funcoes.h"
 
 using namespace std;
 
 int main() {
-    // Chamar o menuu
+    // Chama o menu
     char opcaoEscolhida = menu();
 
-    // Se o usuário digitou somente 1, inicializa o jogo
+    // Se o usuário digitou 1, inicia o jogo
     if (opcaoEscolhida == '1') {
         jogar();
     }
