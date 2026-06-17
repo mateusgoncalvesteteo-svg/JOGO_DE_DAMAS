@@ -1,12 +1,11 @@
 #ifndef funcoes_h
 #define funcoes_h
 
-// Criamos a Struct para não perder pontos com variável global
-struct Jogo {
+// a Struct 
     char tabuleiro[8][8];
 };
 
-// Declaração das suas funções
+// Declaração das funções
 char menu();
 void jogar();
 void inicializarTabuleiro(Jogo& jogo);
