@@ -1,7 +1,8 @@
-#ifndef funcoes_h
-#define funcoes_h
+#ifndef FUNCOES_H
+#define FUNCOES_H
 
-// a Struct 
+// Criamos a Struct um dos pedidos do prof
+struct Jogo {
     char tabuleiro[8][8];
 };
 
