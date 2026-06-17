@@ -1,33 +1,18 @@
-#ifndef FUNCOES_H
-#define FUNCOES_H
-// ===============================
-// MENU
-// ===============================
+#ifndef funcoes_h
+#define funcoes_h
+
+// Criamos a Struct para não perder pontos com variável global
+struct Jogo {
+    char tabuleiro[8][8];
+};
+
+// Declaração das suas funções
 char menu();
 void jogar();
-// ===============================
-// TABULEIRO
-// ===============================
-void inicializarTabuleiro();
-void mostrarTabuleiro(char player);
-
-// ===============================
-// JOGO (PASSO 1)
-// ===============================
-bool moverPeca(int x1, int y1, int x2, int y2, char jogadorAtual);
-bool jogoTerminou();
-
-// ===============================
-// UTILITÁRIO (opcional mas recomendado)
-// ===============================
-int contarPecas(char peca);
-// ===============================
-// LIMPAR TELA
-// ===============================
+void inicializarTabuleiro(Jogo& jogo);
+void mostrarTabuleiro(Jogo& jogo, char player);
+bool moverPeca(Jogo& jogo, int x1, int y1, int x2, int y2, char jogadorAtual);
 void limparTela();
-// ===============================
-// VALIDAÇAO DE INPUT
-// ===============================
 int lerCoordenada();
 
 #endif
