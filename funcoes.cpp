@@ -191,6 +191,16 @@ bool moverPeca(Jogo& jogo, int x1, int y1, int x2, int y2, char jogadorAtual) {
     int diffX = x2 - x1;
     int diffY = y2 - y1;
 
+    char peca = jogo.tabuleiro[x1][y1];
+    //impedir de pecas que NAO sejam a DAMA andem para tras.
+    if(peca == 'B' && diffX != -1) {
+        return false;
+    }
+
+    if(peca == 'P' && diffX != 1) {
+        return false;
+    }
+
     //deixando o valor positivo
     if (diffX < 0) diffX = -diffX;
     if (diffY < 0) diffY = -diffY;
