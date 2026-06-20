@@ -171,45 +171,62 @@ void mostrarTabuleiro(Jogo& jogo, char player)
 }
 // MOVIMENTACAO DAS PECAS
 bool moverPeca(Jogo& jogo, int x1, int y1, int x2, int y2, char jogadorAtual) {
-    //passo1 -> verificar se existir as coodeenadas requisitadas
-    if(x1 < 0 || x1 > 7 || y1 < 0 || y1 > 7 ||
-    x2 < 0 || x2 > 7 || y2 < 0 || y2 > 7) {
+    //verificar se existe as coordenadas requisitadas
+    if(x1 < 0 || x1 > 7 || y1 < 0 || y1 > 7 || 
+    x2 < 0 || x2 > 7 || y2 < 0 || y2 > 7 ) {
         return false;
     }
-
-    // Verificar se a peça , por exemplo branca é do jogador branco
-    if(jogo.tabuleiro[x1][y1] != jogadorAtual) {
+    
+    //verificar se por exemplo: a peca branca é do jogador branco
+    if(jogo.tabuleiro[x1][y1] != jogadorAtual ) {
         return false;
     }
-
-    //Verificar se no destino alvo ja nao tem uma peca
+    
+    //verificar se no destino alvo ja nao tem uma peca
     if(jogo.tabuleiro[x2][y2] != '.') {
         return false;
     }
-
-    // NOVA REGRA: Verificar se andou exatamente 1 casa na diagonal
+    
+    // verificar movimento diagonal de 1 casa ou captura de 2 casas
     int diffX = x2 - x1;
     int diffY = y2 - y1;
-
+    
+    int absX = abs(diffX);//guardar os valores da coordenada
+    int absY = abs(diffY);
+    
     char peca = jogo.tabuleiro[x1][y1];
-    //impedir de pecas que NAO sejam a DAMA andem para tras.
-    if(peca == 'B' && diffX != -1) {
+    //impedir que pecas que nao sejam a DAMA andem para tras
+    if(peca == 'B' && diffX != -1 && diffX != -2) { //-1 = 1 casa e -2 = 2 casa, conta de baixo pra cima
+     return false;
+    }
+    
+    if(peca == 'P' && diffX != 1 && diffX != 2) {//no 'P' o tabuleiro inverte, por isso 1
         return false;
     }
-
-    if(peca == 'P' && diffX != 1) {
+    
+    //verificar se o movimento é diagonal válida (1 casa ou captura de 2)
+    if((absX != absY) || (absX != 1 && absX != 2)) {
         return false;
     }
-
-    //deixando o valor positivo
-    if (diffX < 0) diffX = -diffX;
-    if (diffY < 0) diffY = -diffY;
-
-    //Se a diferença de casas nao for exatamente 1 em X e 1 em Y , nao é diagonal.
-    if (diffX != 1 || diffY != 1) {
-        return false;
+    
+    if(absX == 2 && absY == 2) {
+    int meioX = (x1 + x2)/2; //achar a peca do meio
+    int meioY = (y1 + y2)/2;
+    
+    char pecaMeio = jogo.tabuleiro[meioX][meioY];
+    
+    if(pecaMeio == '.') {
+        return false;//peca comum nao anda 2 casas vazias
     }
-
+    
+    if(pecaMeio == jogo.tabuleiro[x1][y1]) {
+        return false; //nao pode comer peca do mesmo time
+    }
+    
+    jogo.tabuleiro[meioX][meioY] = '.';
+    
+    }
+   
     //Mover a peca, a principal parte dessa funcao
     jogo.tabuleiro[x2][y2] = jogo.tabuleiro[x1][y1];
     jogo.tabuleiro[x1][y1] = '.';
