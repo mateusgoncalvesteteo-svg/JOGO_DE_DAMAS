@@ -1,11 +1,11 @@
 #include <iostream>
 #include <limits>
-#include <cstdlib> // Adicionado para a função abs() funcionar perfeitamente
+#include <cstdlib> //  para a função abs() funcionar perfeitamente
 #include "funcoes.h"
 
 using namespace std;
 
-// MENU
+
 char menu()
 {
     char opcao;
@@ -29,7 +29,7 @@ char menu()
     return opcao;
 }
 
-// JOGO
+
 void jogar()
 {
     Jogo meuJogo;
@@ -248,7 +248,7 @@ bool moverPeca(Jogo& jogo, int x1, int y1, int x2, int y2, char jogadorAtual) {
     }
     
     // ===============================================
-    // LÓGICA DA PEÇA NORMAL (Sua lógica perfeita)
+    // LÓGICA DA PEÇA NORMAL 
     // ===============================================
     int diffX = x2 - x1;
     int diffY = y2 - y1;
