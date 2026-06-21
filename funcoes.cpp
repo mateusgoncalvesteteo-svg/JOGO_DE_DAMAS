@@ -5,31 +5,43 @@
 
 using namespace std;
 
-
+// MENU (estilizado, bonitao)
 char menu()
 {
     char opcao;
+
     do
     {
-        cout << "================================\n";
-        cout << "DAMAS\n";
-        cout << "================================\n";
-        cout << "1. PLAY\n";
+        limparTela();
+
+        cout << "========================================\n";
+        cout << "DDDD     AAA    MM   MM    AAA     SSSS \n";
+        cout << "D   D   A   A   MMM MMM   A   A   S     \n";
+        cout << "D   D   AAAAA   MM M MM   AAAAA    SSS  \n";
+        cout << "D   D   A   A   MM   MM   A   A       S \n";
+        cout << "DDDD    A   A   MM   MM   A   A   SSSSS \n";
+        cout << "========================================\n";
+
+        cout << "====================================\n";
+        cout << "          MENU PRINCIPAL\n";
+        cout << "====================================\n";
+        cout << "[1] PLAY\n";
+        cout << "[0] SAIR\n";
         cout << "Opcao: ";
 
         cin >> opcao;
 
-        if(opcao != '1')
+        if(opcao != '1' && opcao != '0')
         {
-            cout << "Apenas os numeros da lista!\n";
+            cout << "\nOpcao invalida!\n";
         }
 
-    } while(opcao != '1');
+    } while(opcao != '1' && opcao != '0');
 
     return opcao;
 }
 
-
+// FUNCAO JOGAR
 void jogar()
 {
     Jogo meuJogo;
@@ -40,8 +52,25 @@ void jogar()
     bool jogoRodando = true;
     bool jogadaValida = false;
     
-    cout << "Digite P para time preto ou B para time branco: ";
+    cout << "====================================\n";
+    cout << "      ESCOLHA SUA EQUIPE\n";
+    cout << "====================================\n";
+
+    cout << "[B] Pecas Brancas\n";
+    cout << "[P] Pecas Pretas\n";
+    cout << "\nJogador 1 escolha: ";
+
     cin >> jogador1;
+
+    jogador1 = toupper(jogador1);
+
+    while(jogador1 != 'B' && jogador1 != 'P') {
+    cout << "\nOpcao invalida!\n";
+    cout << "Digite apenas B ou P: ";
+
+    cin >> jogador1;
+    jogador1 = toupper(jogador1);
+}
 
     limparTela();
 
@@ -51,6 +80,11 @@ void jogar()
         jogador2 = 'B';
 
     jogadorAtual = 'B';
+
+    cout << "\nJogador 1: " << jogador1;
+    cout << "\nJogador 2: " << jogador2;
+
+    cout << "\n\nPartida iniciando...\n";
 
     inicializarTabuleiro(meuJogo);
 
@@ -72,10 +106,34 @@ void jogar()
             x2 = lerCoordenada();
             y2 = lerCoordenada();
                     
-            if(moverPeca(meuJogo, x1, y1, x2, y2, jogadorAtual))
-            {
-                cout << "Movimento realizado com sucesso!\n";
-                jogadaValida = true;
+        if(moverPeca(meuJogo, x1, y1, x2, y2, jogadorAtual)) {
+            cout << "\nMovimento realizado com sucesso!\n";
+
+            jogadaValida = true;
+            //se tiver peca pra comer ainda(adicionei estilo e a implementacao de existecaptura)
+            while(existeCaptura(meuJogo,x2,y2)) {
+                mostrarTabuleiro(meuJogo,jogadorAtual);
+
+                    cout << "\n====================================";
+                    cout << "\n CAPTURA DISPONIVEL!";
+                    cout << "\n Voce deve continuar capturando";
+                    cout << "\n====================================\n";
+
+                    x1 = x2;
+                    y1 = y2;
+
+                    cout << "\nNova linha e coluna destino: ";
+
+                     x2 = lerCoordenada();
+                     y2 = lerCoordenada();
+
+                if(!moverPeca(meuJogo,x1,y1,x2,y2,jogadorAtual)) {
+                    cout << "\nMovimento invalido!\n";
+
+                    x2 = x1;
+                    y2 = y1;
+                }
+            }
             }
             else
             {
@@ -159,16 +217,14 @@ void mostrarTabuleiro(Jogo& jogo, char player)
     cout << "========================\n";
 }
 
-// ===============================
-// MOVIMENTO EXCLUSIVO DA DAMA
-// ===============================
+// MOVIMENTACAO DA DAMA
 bool moverDama(Jogo& jogo, int x1, int y1, int x2, int y2, char jogadorAtual) {
     char peca = jogo.tabuleiro[x1][y1];
     
     int diffX = x2 - x1;
     int diffY = y2 - y1;
 
-    // Verificar se o movimento é perfeitamente diagonal
+    // Verificar se o movimento é diagonal
     if (abs(diffX) != abs(diffY)) {
         return false;
     }
@@ -219,9 +275,7 @@ bool moverDama(Jogo& jogo, int x1, int y1, int x2, int y2, char jogadorAtual) {
     return true;
 }
 
-// ===============================
-// MOVIMENTACAO DAS PECAS (PRINCIPAL)
-// ===============================
+// MOVIMENTACAO DAS PECAS
 bool moverPeca(Jogo& jogo, int x1, int y1, int x2, int y2, char jogadorAtual) {
     // 1. Verificar se as coordenadas existem
     if(x1 < 0 || x1 > 7 || y1 < 0 || y1 > 7 || 
@@ -231,25 +285,21 @@ bool moverPeca(Jogo& jogo, int x1, int y1, int x2, int y2, char jogadorAtual) {
     
     char peca = jogo.tabuleiro[x1][y1];
 
-    // 2. Verificar se a peça pertence ao jogador (incluindo Damas 'D' e 'Q')
+    // Verificar se a peça pertence ao jogador (incluindo Damas 'D' e 'Q')
     if (jogadorAtual == 'B' && (peca != 'B' && peca != 'D')) return false;
     if (jogadorAtual == 'P' && (peca != 'P' && peca != 'Q')) return false;
     
-    // 3. Verificar se destino já não tem uma peca
+    // Verificar se destino já não tem uma peca
     if(jogo.tabuleiro[x2][y2] != '.') {
         return false;
     }
 
-    // ===============================================
-    // SE FOR DAMA, REPASSA PARA A FUNÇÃO DELA!
-    // ===============================================
+    // Se for Dama , repassar a funcao para ela
     if (peca == 'D' || peca == 'Q') {
         return moverDama(jogo, x1, y1, x2, y2, jogadorAtual);
     }
     
-    // ===============================================
-    // LÓGICA DA PEÇA NORMAL 
-    // ===============================================
+    // Lógica da peca normal
     int diffX = x2 - x1;
     int diffY = y2 - y1;
     int absX = abs(diffX);
@@ -279,9 +329,7 @@ bool moverPeca(Jogo& jogo, int x1, int y1, int x2, int y2, char jogadorAtual) {
     jogo.tabuleiro[x2][y2] = jogo.tabuleiro[x1][y1];
     jogo.tabuleiro[x1][y1] = '.';
 
-    // ===============================================
-    // PROMOÇÃO (Se chegar no final, vira Dama!)
-    // ===============================================
+    // PROMOCAO DA DAMA
     if (jogo.tabuleiro[x2][y2] == 'B' && x2 == 0) {
         jogo.tabuleiro[x2][y2] = 'D'; // Vira Dama Branca (Letra D)
     } else if (jogo.tabuleiro[x2][y2] == 'P' && x2 == 7) {
@@ -289,6 +337,111 @@ bool moverPeca(Jogo& jogo, int x1, int y1, int x2, int y2, char jogadorAtual) {
     }
 
     return true;
+}
+
+//UPGRADE DE COMER PECA(possibilidade de comer mais de uma peca por turno)
+bool existeCaptura(Jogo& jogo, int x, int y)
+{
+    // descobrir qual peça está na posição atual
+    char peca = jogo.tabuleiro[x][y];
+
+    // matriz que guarda direções
+    int direcoes[4][2];
+    int quantidade;
+
+    // definir direções dependendo da peça
+    if(peca == 'B')
+    {
+        quantidade = 2;
+
+        // cima-esquerda
+        direcoes[0][0] = -1;
+        direcoes[0][1] = -1;
+
+        // cima-direita
+        direcoes[1][0] = -1;
+        direcoes[1][1] = 1;
+    }
+
+    else if(peca == 'P')
+    {
+        quantidade = 2;
+
+        // baixo-esquerda
+        direcoes[0][0] = 1;
+        direcoes[0][1] = -1;
+
+        // baixo-direita
+        direcoes[1][0] = 1;
+        direcoes[1][1] = 1;
+    }
+
+    else // D ou Q (damas)
+    {
+        quantidade = 4;
+
+        direcoes[0][0] = -1;
+        direcoes[0][1] = -1;
+
+        direcoes[1][0] = -1;
+        direcoes[1][1] = 1;
+
+        direcoes[2][0] = 1;
+        direcoes[2][1] = -1;
+
+        direcoes[3][0] = 1;
+        direcoes[3][1] = 1;
+    }
+
+    // testar cada direção possível
+    for(int i = 0; i < quantidade; i++)
+    {
+        int dx = direcoes[i][0];
+        int dy = direcoes[i][1];
+
+        // posição da peça que pode ser comida
+        int meioX = x + dx;
+        int meioY = y + dy;
+
+        // posição depois da peça
+        int destinoX = x + (dx * 2);
+        int destinoY = y + (dy * 2);
+
+        // impedir sair do tabuleiro
+        if(meioX < 0 || meioX > 7 ||
+           meioY < 0 || meioY > 7 ||
+           destinoX < 0 || destinoX > 7 ||
+           destinoY < 0 || destinoY > 7)
+        {
+            continue;
+        }
+
+        char pecaMeio = jogo.tabuleiro[meioX][meioY];
+
+        // verificar inimigo
+        bool inimigo = false;
+
+        if(peca == 'B' || peca == 'D')
+        {
+            if(pecaMeio == 'P' || pecaMeio == 'Q')
+                inimigo = true;
+        }
+
+        if(peca == 'P' || peca == 'Q')
+        {
+            if(pecaMeio == 'B' || pecaMeio == 'D')
+                inimigo = true;
+        }
+
+        // inimigo no meio + espaço vazio depois
+        if(inimigo &&
+           jogo.tabuleiro[destinoX][destinoY] == '.')
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // LIMPAR TELA
