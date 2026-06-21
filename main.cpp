@@ -8,8 +8,15 @@ int main() {
     char opcaoEscolhida = menu();
 
     // Se o usuário digitou 1, inicia o jogo
-    if (opcaoEscolhida == '1') {
+    switch(opcaoEscolhida)
+{
+    case '1':
         jogar();
+        break;
+
+    case '0':
+        cout << "\nEncerrando jogo...\n";
+        break;
     }
 
     cout << "Obrigado por jogar!\n";
