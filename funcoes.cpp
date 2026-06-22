@@ -43,7 +43,7 @@ char menu()
 }
 
 // FUNCAO JOGAR
-void jogar() {
+void jogar() { 
     Jogo meuJogo;
     limparTela();
 
@@ -91,6 +91,11 @@ void jogar() {
     while (jogoRodando) {
         jogadaValida = false;
         mostrarTabuleiro(meuJogo, jogadorAtual);
+
+        cout << "\n================================";
+        cout << "\n BRANCAS: " << contarPecas(meuJogo,'B');
+        cout << " | PRETAS: " << contarPecas(meuJogo,'P');
+        cout << "\n================================\n";
         
         while (!jogadaValida) {
             cout << "\nJogador atual: " << jogadorAtual << endl;
@@ -491,6 +496,40 @@ bool jogadorTemCaptura(Jogo& jogo, char jogadorAtual) {
     }
 
     return false;
+}
+
+//CONTAR PECAS
+int contarPecas(Jogo& jogo, char jogador)
+{
+    int quantidade = 0;
+
+    for(int i = 0; i < 8; i++)
+    {
+        for(int j = 0; j < 8; j++)
+        {
+            char peca = jogo.tabuleiro[i][j];
+
+            // contar peças brancas
+            if(jogador == 'B')
+            {
+                if(peca == 'B' || peca == 'D')
+                {
+                    quantidade++;
+                }
+            }
+
+            // contar peças pretas
+            else if(jogador == 'P')
+            {
+                if(peca == 'P' || peca == 'Q')
+                {
+                    quantidade++;
+                }
+            }
+        }
+    }
+
+    return quantidade;
 }
 
 // LIMPAR TELA
