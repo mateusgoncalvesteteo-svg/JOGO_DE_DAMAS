@@ -1,5 +1,6 @@
 #include <iostream>
 #include <limits>
+#include <cctype>//para toupper
 #include <cstdlib> //  para a função abs() funcionar perfeitamente
 #include "funcoes.h"
 
@@ -15,11 +16,11 @@ char menu()
         limparTela();
 
         cout << "========================================\n";
-        cout << "DDDD     AAA    MM   MM    AAA     SSSS \n";
-        cout << "D   D   A   A   MMM MMM   A   A   S     \n";
-        cout << "D   D   AAAAA   MM M MM   AAAAA    SSS  \n";
-        cout << "D   D   A   A   MM   MM   A   A       S \n";
-        cout << "DDDD    A   A   MM   MM   A   A   SSSSS \n";
+        cout << "DDDD|    AAA|   MM|  MM|   AAA|    SSSS|\n";
+        cout << "D|  D|  A|  A|  MMM|MMM|  A|  A|  S|    \n";
+        cout << "D|  D|  AAAAA|  MM M|MM|  AAAAA|   SSS| \n";
+        cout << "D|  D|  A|  A|  MM|  MM|  A|  A|      S|\n";
+        cout << "DDDD|   A|  A|  MM|  MM|  A|  A|  SSSSS|\n";
         cout << "========================================\n";
 
         cout << "====================================\n";
@@ -42,8 +43,7 @@ char menu()
 }
 
 // FUNCAO JOGAR
-void jogar()
-{
+void jogar() {
     Jogo meuJogo;
     limparTela();
 
@@ -88,8 +88,7 @@ void jogar()
 
     inicializarTabuleiro(meuJogo);
 
-    while (jogoRodando)
-    {
+    while (jogoRodando) {
         jogadaValida = false;
         mostrarTabuleiro(meuJogo, jogadorAtual);
         
@@ -101,17 +100,40 @@ void jogar()
             cout << "Linha origem e Coluna origem (separados por espaco): ";
             x1 = lerCoordenada();
             y1 = lerCoordenada();
-
+             
             cout << "Linha destino e Coluna Destino (separados por espaco): ";
             x2 = lerCoordenada();
             y2 = lerCoordenada();
-                    
+
+        bool capturaObrigatoria = jogadorTemCaptura(meuJogo, jogadorAtual);
+
+        if(capturaObrigatoria && !existeCaptura(meuJogo,x1,y1))
+        {
+            int distancia = abs(x2 - x1);
+
+            if(distancia != 2)
+            {
+                cout << "\n====================================";
+                cout << "\n CAPTURA OBRIGATORIA!";
+                cout << "\n Voce precisa comer uma peca.";
+                cout << "\n====================================\n";
+
+                continue;
+            }
+        }
+       
         if(moverPeca(meuJogo, x1, y1, x2, y2, jogadorAtual)) {
+
             cout << "\nMovimento realizado com sucesso!\n";
 
             jogadaValida = true;
-            //se tiver peca pra comer ainda(adicionei estilo e a implementacao de existecaptura)
-            while(existeCaptura(meuJogo,x2,y2)) {
+            //guardar o quanto a peca andou
+            int distancia = abs(x2-x1);
+            // So entra aqui se acabou de capturar
+            if(distancia == 2)
+            {
+            while(existeCaptura(meuJogo,x2,y2)) 
+            {
                 mostrarTabuleiro(meuJogo,jogadorAtual);
 
                     cout << "\n====================================";
@@ -127,19 +149,21 @@ void jogar()
                      x2 = lerCoordenada();
                      y2 = lerCoordenada();
 
-                if(!moverPeca(meuJogo,x1,y1,x2,y2,jogadorAtual)) {
+                if(!moverPeca(meuJogo,x1,y1,x2,y2,jogadorAtual)) 
+                {
                     cout << "\nMovimento invalido!\n";
 
                     x2 = x1;
                     y2 = y1;
                 }
             }
-            }
-            else
-            {
-                cout << "Movimento invalido!\n";
-            }
         }
+    }
+    else
+    {
+        cout << "Movimento invalido!\n";
+        }
+    }
         
         // troca de turno
         if(jogadorAtual == 'B')
@@ -438,6 +462,31 @@ bool existeCaptura(Jogo& jogo, int x, int y)
            jogo.tabuleiro[destinoX][destinoY] == '.')
         {
             return true;
+        }
+    }
+
+    return false;
+}
+
+//CAPTURA OBRIGATORIA
+bool jogadorTemCaptura(Jogo& jogo, char jogadorAtual) {
+    for(int i = 0; i < 8; i++) {
+        for(int j = 0; j < 8; j++) {
+            char peca = jogo.tabuleiro[i][j];
+
+            // peças do jogador branco
+            if(jogadorAtual == 'B' && (peca == 'B' || peca == 'D')) {
+                if(existeCaptura(jogo, i, j)) {
+                    return true;
+                }
+            }
+
+            // peças do jogador preto
+            if(jogadorAtual == 'P' && (peca == 'P' || peca == 'Q')) {
+                if(existeCaptura(jogo, i, j)) {
+                    return true;
+                }
+            }
         }
     }
 
