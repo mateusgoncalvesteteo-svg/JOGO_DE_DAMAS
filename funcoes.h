@@ -13,8 +13,8 @@ void inicializarTabuleiro(Jogo& jogo);
 void mostrarTabuleiro(Jogo& jogo, char player);
 bool moverPeca(Jogo& jogo, int x1, int y1, int x2, int y2, char jogadorAtual);
 bool moverDama(Jogo& jogo, int x1, int y1, int x2, int y2, char jogadorAtual);
-bool existeCaptura(Jogo& jogo, int x, int y);// <-- funcao comer2.0 adicionada!
-bool jogadorTemCaptura(Jogo& jogo, char jogadorAtual);
+bool existeCaptura(Jogo& jogo, int x, int y);
+bool jogadorTemCaptura(Jogo& jogo, char jogadorAtual);// <-- captura obrigatoria
 void limparTela();
 int lerCoordenada();
 
