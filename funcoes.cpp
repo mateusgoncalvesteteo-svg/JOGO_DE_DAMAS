@@ -43,29 +43,29 @@ char menu()
 }
 
 // FUNCAO JOGAR
-void jogar() {
-Jogo meuJogo;
-limparTela();
+void jogar() { 
+    vector<PerfilJogador> listaDePerfis;
+    Jogo meuJogo;
+    limparTela();
 
-char jogador1, jogador2;
-char jogadorAtual;
-bool jogoRodando = true;
-bool jogadaValida = false;
-bool desistiu = false;
+    char jogador1, jogador2;
+    char jogadorAtual;
+    bool jogoRodando = true;
+    bool jogadaValida = false;
+    
+    cout << "====================================\n";
+    cout << "      ESCOLHA SUA EQUIPE\n";
+    cout << "====================================\n";
 
-cout << "====================================\n";
-cout << "      ESCOLHA SUA EQUIPE\n";
-cout << "====================================\n";
+    cout << "[B] Pecas Brancas\n";
+    cout << "[P] Pecas Pretas\n";
+    cout << "\nJogador 1 escolha: ";
 
-cout << "[B] Pecas Brancas\n";
-cout << "[P] Pecas Pretas\n";
-cout << "\nJogador 1 escolha: ";
+    cin >> jogador1;
 
-cin >> jogador1;
-jogador1 = toupper(jogador1);
+    jogador1 = toupper(jogador1);
 
-while(jogador1 != 'B' && jogador1 != 'P')
-{
+    while(jogador1 != 'B' && jogador1 != 'P') {
     cout << "\nOpcao invalida!\n";
     cout << "Digite apenas B ou P: ";
 
@@ -73,168 +73,142 @@ while(jogador1 != 'B' && jogador1 != 'P')
     jogador1 = toupper(jogador1);
 }
 
-limparTela();
+    limparTela();
 
-// definir equipe do jogador 2
-if (jogador1 == 'B')
-    jogador2 = 'P';
-else
-    jogador2 = 'B';
+    if (jogador1 == 'B')
+        jogador2 = 'P';
+    else
+        jogador2 = 'B';
 
-jogadorAtual = 'B';
+    jogadorAtual = 'B';
 
-cout << "\nJogador 1: " << jogador1;
-cout << "\nJogador 2: " << jogador2;
-cout << "\n\nPartida iniciando...\n";
+    cout << "\nJogador 1: " << jogador1;
+    cout << "\nJogador 2: " << jogador2;
 
-inicializarTabuleiro(meuJogo);
+    cout << "\n\nPartida iniciando...\n";
 
-while(jogoRodando)
-{
-    jogadaValida = false;
+    inicializarTabuleiro(meuJogo);
 
-    mostrarTabuleiro(meuJogo, jogadorAtual);
+    while (jogoRodando) {
+        jogadaValida = false;
+        mostrarTabuleiro(meuJogo, jogadorAtual);
 
-    cout << "\n================================";
-    cout << "\n BRANCAS: " << contarPecas(meuJogo,'B');
-    cout << " | PRETAS: " << contarPecas(meuJogo,'P');
-    cout << "\n================================\n";
+        cout << "\n================================";
+        cout << "\n BRANCAS: " << contarPecas(meuJogo,'B');
+        cout << " | PRETAS: " << contarPecas(meuJogo,'P');
+        cout << "\n================================\n";
+        
+        while (!jogadaValida) {
+            cout << "\nJogador atual: " << jogadorAtual << endl;
 
-    while(!jogadaValida)
-    {
-        cout << "\nJogador atual: " << jogadorAtual << endl;
+            int x1, y1, x2, y2;
 
-        int x1,y1,x2,y2;
+            cout << "Linha origem e Coluna origem (separados por espaco): ";
+            x1 = lerCoordenada();
+            y1 = lerCoordenada();
+             
+            cout << "Linha destino e Coluna Destino (separados por espaco): ";
+            x2 = lerCoordenada();
+            y2 = lerCoordenada();
 
-        cout << "Linha origem e Coluna origem: ";
-        x1 = lerCoordenada();
-        y1 = lerCoordenada();
+        bool capturaObrigatoria = jogadorTemCaptura(meuJogo, jogadorAtual);
 
-        cout << "Linha destino e Coluna destino: ";
-        x2 = lerCoordenada();
-        y2 = lerCoordenada();
-
-        bool capturaObrigatoria =
-        jogadorTemCaptura(meuJogo,jogadorAtual);
-
-        if(capturaObrigatoria &&
-           !existeCaptura(meuJogo,x1,y1))
+        if(capturaObrigatoria && !existeCaptura(meuJogo,x1,y1))
         {
-            int distancia = abs(x2-x1);
+            int distancia = abs(x2 - x1);
 
             if(distancia != 2)
             {
-                cout << "\n================================";
+                cout << "\n====================================";
                 cout << "\n CAPTURA OBRIGATORIA!";
-                cout << "\n Voce precisa comer uma peca";
-                cout << "\n================================\n";
+                cout << "\n Voce precisa comer uma peca.";
+                cout << "\n====================================\n";
 
                 continue;
             }
         }
+       
+        if(moverPeca(meuJogo, x1, y1, x2, y2, jogadorAtual)) {
 
-        if(moverPeca(meuJogo,x1,y1,x2,y2,jogadorAtual))
-        {
             cout << "\nMovimento realizado com sucesso!\n";
 
             jogadaValida = true;
-
-            // guardar o quanto a peça andou
+            //guardar o quanto a peca andou
             int distancia = abs(x2-x1);
-
-            // só entra aqui se capturou
+            // So entra aqui se acabou de capturar
             if(distancia == 2)
             {
-                while(existeCaptura(meuJogo,x2,y2))
-                {
-                    mostrarTabuleiro(meuJogo,jogadorAtual);
+            while(existeCaptura(meuJogo,x2,y2)) 
+            {
+                mostrarTabuleiro(meuJogo,jogadorAtual);
 
-                    cout << "\n================================";
+                    cout << "\n====================================";
                     cout << "\n CAPTURA DISPONIVEL!";
                     cout << "\n Voce deve continuar capturando";
-                    cout << "\n================================\n";
+                    cout << "\n====================================\n";
 
                     x1 = x2;
                     y1 = y2;
 
                     cout << "\nNova linha e coluna destino: ";
 
-                    x2 = lerCoordenada();
-                    y2 = lerCoordenada();
+                     x2 = lerCoordenada();
+                     y2 = lerCoordenada();
 
-                    if(!moverPeca(
-                        meuJogo,
-                        x1,y1,
-                        x2,y2,
-                        jogadorAtual))
-                    {
-                        cout << "\nMovimento invalido!\n";
+                if(!moverPeca(meuJogo,x1,y1,x2,y2,jogadorAtual)) 
+                {
+                    cout << "\nMovimento invalido!\n";
 
-                        x2 = x1;
-                        y2 = y1;
-                    }
+                    x2 = x1;
+                    y2 = y1;
                 }
             }
         }
-        else
-        {
-            cout << "\nMovimento invalido!\n";
-        }
-
-    } // fim while(!jogadaValida)
-
-
-    // perguntar se quer continuar
-    char sair;
-
-    cout << "\nContinuar jogando? (s/n): ";
-    cin >> sair;
-
-    if(sair == 'n')
-    {
-        desistiu = true;
-    }
-
-    // verificar se a partida terminou
-    if(verificarFimDeJogo(
-        meuJogo,
-        jogadorAtual,
-        desistiu))
-    {
-        char vencedor;
-
-        vencedor =
-        verificarVencedor(
-            meuJogo,
-            jogadorAtual,
-            desistiu);
-
-        cout << "\n================================";
-        cout << "\n        FIM DE JOGO";
-        cout << "\n================================";
-        cout << "\nVencedor: " << vencedor;
-        cout << "\n================================\n";
-
-        jogoRodando = false;
-
-        cout << "\nPressione ENTER...";
-        cin.ignore();
-        cin.get();
     }
     else
     {
-        // troca de turno somente se continuar
+        cout << "Movimento invalido!\n";
+        }
+    }
+        
+        // troca de turno
         if(jogadorAtual == 'B')
             jogadorAtual = 'P';
         else
             jogadorAtual = 'B';
+
+        char sair;
+        cout << "\nContinuar jogando? (s/n): ";
+        cin >> sair;
+
+        limparTela();
+
+        if(sair == 'n')
+        {
+            jogoRodando = false;
+            
+            // ==================================================
+            // REGISTAR VENCEDOR (Uso da STL e Recursividade)
+            // ==================================================
+            cout << "====================================\n";
+            cout << "          FIM DE JOGO!\n";
+            cout << "====================================\n";
+            
+            string nomeVencedor;
+            cout << "Digite o nome do jogador vencedor (ou 'empate'): ";
+            cin >> nomeVencedor;
+            
+            if (nomeVencedor != "empate") {
+                atualizarPerfil(listaDePerfis, nomeVencedor);
+                
+                // Pausa para o utilizador ler a mensagem de vitória
+                cout << "\nPrima qualquer tecla e Enter para voltar ao menu...";
+                char pausa;
+                cin >> pausa;
+            }
+        }
     }
-
-    limparTela();
-
-} // fim while(jogoRodando)
-
-} // fim jogar
+}
 
 // INICIALIZA TABULEIRO
 void inicializarTabuleiro(Jogo& jogo)
@@ -579,153 +553,6 @@ int contarPecas(Jogo& jogo, char jogador)
     return quantidade;
 }
 
-//VERIFICAR MOVIMENTOS
-bool jogadorTemMovimentos(Jogo& jogo, char jogador)
-{
-    for(int i = 0; i < 8; i++)
-    {
-        for(int j = 0; j < 8; j++)
-        {
-            char peca = jogo.tabuleiro[i][j];
-
-            // verificar peças do jogador branco
-            if(jogador == 'B' &&
-              (peca == 'B' || peca == 'D'))
-            {
-                // verificar captura
-                if(existeCaptura(jogo,i,j))
-                {
-                    return true;
-                }
-
-                // verificar movimento simples da peça branca
-                if(peca == 'B')
-                {
-                    if(i-1 >= 0)
-                    {
-                        if(j-1 >= 0 &&
-                           jogo.tabuleiro[i-1][j-1] == '.')
-                        {
-                            return true;
-                        }
-
-                        if(j+1 <= 7 &&
-                           jogo.tabuleiro[i-1][j+1] == '.')
-                        {
-                            return true;
-                        }
-                    }
-                }
-
-                // verificar movimento da dama branca
-                if(peca == 'D')
-                {
-                    return true;
-                }
-            }
-
-            // verificar peças do jogador preto
-            if(jogador == 'P' &&
-              (peca == 'P' || peca == 'Q'))
-            {
-                // verificar captura
-                if(existeCaptura(jogo,i,j))
-                {
-                    return true;
-                }
-
-                // verificar movimento simples peça preta
-                if(peca == 'P')
-                {
-                    if(i+1 <= 7)
-                    {
-                        if(j-1 >= 0 &&
-                           jogo.tabuleiro[i+1][j-1] == '.')
-                        {
-                            return true;
-                        }
-
-                        if(j+1 <= 7 &&
-                           jogo.tabuleiro[i+1][j+1] == '.')
-                        {
-                            return true;
-                        }
-                    }
-                }
-
-                // verificar dama preta
-                if(peca == 'Q')
-                {
-                    return true;
-                }
-            }
-        }
-    }
-
-    return false;
-}
-
-//VERIFICAR DESISTENCIA
-bool verificarFimDeJogo(Jogo& jogo,char jogadorAtual,bool desistiu)
-{
-    // desistência
-    if(desistiu)
-    {
-        return true;
-    }
-
-    // sem peças
-    if(contarPecas(jogo,'B') == 0)
-    {
-        return true;
-    }
-
-    if(contarPecas(jogo,'P') == 0)
-    {
-        return true;
-    }
-
-    // travado
-    if(!jogadorTemMovimentos(jogo,jogadorAtual))
-    {
-        return true;
-    }
-
-    // continua
-    return false;
-}
-
-//VERIFICAR GANHADOR
-char verificarVencedor(Jogo& jogo,char jogadorAtual,bool desistiu)
-{
-    // desistiu
-    if(desistiu)
-    {
-        if(jogadorAtual == 'B')
-            return 'P';
-        else
-            return 'B';
-    }
-
-    // sem peças
-    if(contarPecas(jogo,'B') == 0)
-        return 'P';
-
-    if(contarPecas(jogo,'P') == 0)
-        return 'B';
-
-    // travado
-    if(!jogadorTemMovimentos(jogo,jogadorAtual))
-    {
-        if(jogadorAtual == 'B')
-            return 'P';
-        else
-            return 'B';
-    }
-
-    return 'N'; // ninguém venceu ainda
-}
-
 // LIMPAR TELA
 void limparTela() {
 #ifdef _WIN32
@@ -751,5 +578,38 @@ int lerCoordenada() {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
+    }
+}
+// ==========================================
+//          BUSCA E RECURSIVIDADE
+// ==========================================
+int buscaRecursiva(const vector<PerfilJogador>& perfis, string nomeBuscado, int indiceAtual) {
+    if (indiceAtual >= perfis.size()) {
+        return -1; 
+    }
+    
+    if (perfis[indiceAtual].nome == nomeBuscado) {
+        return indiceAtual; 
+    }
+    
+    return buscaRecursiva(perfis, nomeBuscado, indiceAtual + 1);
+}
+
+// ==========================================
+//           USO DE STL (VECTOR)
+// ==========================================
+void atualizarPerfil(vector<PerfilJogador>& perfis, string nomeJogador) {
+    int indice = buscaRecursiva(perfis, nomeJogador, 0);
+
+    if (indice != -1) {
+        perfis[indice].vitorias++;
+        cout << "\nO jogador " << nomeJogador << " ja tinha registo. Vitorias atualizadas para: " << perfis[indice].vitorias << "!\n";
+    } else {
+        PerfilJogador novoJogador;
+        novoJogador.nome = nomeJogador;
+        novoJogador.vitorias = 1; 
+        
+        perfis.push_back(novoJogador); 
+        cout << "\nNovo perfil criado para " << nomeJogador << " com 1 vitoria!\n";
     }
 }
