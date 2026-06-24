@@ -1,5 +1,6 @@
 #include <iostream>
 #include <limits>
+#include <fstream>//para ofstream
 #include <vector>
 #include <string> 
 #include <cctype>//para toupper
@@ -29,23 +30,24 @@ char menu()
         cout << "          MENU PRINCIPAL\n";
         cout << "====================================\n";
         cout << "[1] PLAY\n";
+        cout << "[2] RANKING\n";
         cout << "[0] SAIR\n";
         cout << "Opcao: ";
 
         cin >> opcao;
 
-        if(opcao != '1' && opcao != '0')
+        if(opcao != '1' && opcao != '2' && opcao != '0')
         {
             cout << "\nOpcao invalida!\n";
         }
 
-    } while(opcao != '1' && opcao != '0');
+    } while(opcao != '1' && opcao != '2' && opcao != '0');
 
     return opcao;
 }
 
 // FUNCAO JOGAR
-void jogar() {
+void jogar(vector<PerfilJogador>& perfis) {
 Jogo meuJogo;
 limparTela();
 
@@ -218,11 +220,12 @@ while(jogoRodando)
         cout << "\nDigite o nick do Vencedor: ";
         cin >> nomeVencedor;
 
+        atualizarPerfil(perfis, nomeVencedor);
+
         jogoRodando = false;
 
         cout << "\nPressione ENTER...";
-        cin.ignore();
-        cin.get();
+        cin.ignore();//voltar ao menu
     }
     else
     {
@@ -755,15 +758,86 @@ void atualizarPerfil(vector<PerfilJogador>& perfis,string nomeJogador)
     else
     {
         PerfilJogador novoJogador;
-
-        novoJogador.nome=nomeJogador;
+        novoJogador.nome = nomeJogador;
         novoJogador.vitorias=1;
-
         perfis.push_back(
         novoJogador);
-
         cout<<"\nNovo perfil criado!\n";
     }
+
+    salvarPerfis(perfis); //salvar imediatamente
+}
+
+// SALVAR PERFIS EM ARQUIVO
+void salvarPerfis(const vector<PerfilJogador>& perfis) {
+    ofstream arquivo("ranking.txt");//nome do arquivo
+
+    if(!arquivo.is_open()) {//se nao foi aberto
+        
+        cout << "\nErro ao salvar ranking\n";
+        return;
+    }
+
+    for(const auto& perfil : perfis) {//igual ao exemplo dado em sala de aula
+        //mostrar o nome e as vitorias
+        arquivo << perfil.nome << " " << perfil.vitorias << endl;
+    }
+
+    arquivo.close();//fechar o arquivo depois de aberto
+}
+
+//CARREGAR PERFIS DO ARQUIVO
+vector<PerfilJogador> carregarPerfis() {
+
+    vector<PerfilJogador> perfis;
+    ifstream arquivo("ranking.txt");//carregar o perfil nesse aruivo
+
+    if(!arquivo.is_open()) {//se nao foi aberto
+
+    return perfis;//arquivo vazio retorna nada
+    }
+
+    string nome;
+    int vitorias;
+
+    while(arquivo >> nome >> vitorias) {
+
+        PerfilJogador perfil;
+        perfil.nome = nome;
+        perfil.vitorias = vitorias;
+        perfis.push_back(perfil);//salvar tudo em perfis
+    }
+
+    arquivo.close();
+    return perfis;
+}
+
+//RANKING
+void exibirRanking(const vector<PerfilJogador>& perfis) {
+
+    limparTela();
+
+     
+    cout << "====================================\n";
+    cout << "       RANKING DE VENCEDORES\n";
+    cout << "====================================\n";
+
+    if(perfis.empty()) { //se estiver vazio
+        cout << "Nenhum vencedor registrado ainda!\n";
+    } else {
+        cout << "Pos | Nick           | Vitorias\n";
+        cout << "====================================\n";
+
+        for(int i = 0; i<perfis.size(); i++) {
+            cout << i+1 << "   | " << perfis[i].nome << " | " << perfis[i].vitorias << endl;
+
+        }
+    }
+
+    cout << "====================================\n";
+    cout << "\nPressione ENTER para voltar...";
+    cin.ignore();
+    cin.get();
 }
 
 // LIMPAR TELA
