@@ -48,5 +48,10 @@ void registrarJogada(Jogo& jogo, int x1, int y1, int x2, int y2, char jogador, b
 void salvarHistoricoPartida(const Jogo& jogo, const string& nomeVencedor);
 void exibirHistorico(const Jogo& jogo);
 void carregarEExibirHistorico(const string& nomeJogador);
+void ordenaRankingPorVitorias(vector<PerfilJogador>& perfis);
+int buscaBinaria(const vector<PerfilJogador>& perfis, const string& nome);
+void carregarEExibirHistorico(const string& nomeJogador);
+void exibirRegras();
+void exibirCreditos();
 
 #endif
