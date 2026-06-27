@@ -4,13 +4,21 @@
 #include <string>      
 
 using namespace std;
-
-// Struct do Jogo
-struct Jogo {
-    char tabuleiro[8][8];
+//structs usadas
+struct Jogada {
+    int rodada;
+    char jogador;
+    int x1, y1;
+    int x2, y2;
+    bool foi_captura;
 };
 
-// Struct do Perfil
+struct Jogo {
+    char tabuleiro[8][8];
+    vector<Jogada> historico;
+    int rodada;
+};
+
 struct PerfilJogador {
     string nome;
     int vitorias;
@@ -36,5 +44,9 @@ vector<PerfilJogador> carregarPerfis();
 void exibirRanking(const vector<PerfilJogador>& perfis);
 void limparTela();
 int lerCoordenada();
+void registrarJogada(Jogo& jogo, int x1, int y1, int x2, int y2, char jogador, bool captura);
+void salvarHistoricoPartida(const Jogo& jogo, const string& nomeVencedor);
+void exibirHistorico(const Jogo& jogo);
+void carregarEExibirHistorico(const string& nomeJogador);
 
 #endif
