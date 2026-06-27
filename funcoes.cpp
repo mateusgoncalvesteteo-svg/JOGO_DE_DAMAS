@@ -31,17 +31,18 @@ char menu()
         cout << "====================================\n";
         cout << "[1] PLAY\n";
         cout << "[2] RANKING\n";
+        cout << "[3] HISTORICO\n";
         cout << "[0] SAIR\n";
         cout << "Opcao: ";
 
         cin >> opcao;
 
-        if(opcao != '1' && opcao != '2' && opcao != '0')
+        if(opcao != '1' && opcao != '2' && opcao != '3' && opcao != '0')
         {
             cout << "\nOpcao invalida!\n";
         }
 
-    } while(opcao != '1' && opcao != '2' && opcao != '0');
+    } while(opcao != '1' && opcao != '2' && opcao != '3' && opcao != '0');
 
     return opcao;
 }
@@ -143,10 +144,10 @@ while(jogoRodando)
 
             jogadaValida = true;
 
-            // guardar o quanto a peça andou
             int distancia = abs(x2-x1);
+            bool houvCaptura = (distancia == 2);
+            registrarJogada(meuJogo, x1, y1, x2, y2, jogadorAtual, houvCaptura);
 
-            // só entra aqui se capturou
             if(distancia == 2)
             {
                 while(existeCaptura(meuJogo,x2,y2))
@@ -176,6 +177,10 @@ while(jogoRodando)
 
                         x2 = x1;
                         y2 = y1;
+                    }
+                    else
+                    {
+                        registrarJogada(meuJogo, x1, y1, x2, y2, jogadorAtual, true);
                     }
                 }
             }
@@ -221,6 +226,8 @@ while(jogoRodando)
         cin >> nomeVencedor;
 
         atualizarPerfil(perfis, nomeVencedor);
+        
+        salvarHistoricoPartida(meuJogo, nomeVencedor);
 
         jogoRodando = false;
 
@@ -245,6 +252,9 @@ while(jogoRodando)
 // INICIALIZA TABULEIRO
 void inicializarTabuleiro(Jogo& jogo)
 {
+    jogo.historico.clear();
+    jogo.rodada = 0;
+
     for (int i = 0; i < 8; i++)
     {
         for (int j = 0; j < 8; j++)
@@ -272,7 +282,7 @@ void mostrarTabuleiro(Jogo& jogo, char player)
     cout << "\n========================\n";
     cout << "  ";
     for(int j = 0; j < 8; j++) {
-        cout << " " << j << " ";
+        cout << " " << j << " "; 
     }
     cout << endl;
 
@@ -770,6 +780,7 @@ void atualizarPerfil(vector<PerfilJogador>& perfis,string nomeJogador)
 
 // SALVAR PERFIS EM ARQUIVO
 void salvarPerfis(const vector<PerfilJogador>& perfis) {
+    try{
     ofstream arquivo("ranking.txt");//nome do arquivo
 
     if(!arquivo.is_open()) {//se nao foi aberto
@@ -784,12 +795,18 @@ void salvarPerfis(const vector<PerfilJogador>& perfis) {
     }
 
     arquivo.close();//fechar o arquivo depois de aberto
+    cout << " Ranking salvo com sucesso!\n ";
+
+    }catch(exception& e) {
+    cout << "Erro ao salvar\n" << e.what() << endl;
+    }
 }
 
 //CARREGAR PERFIS DO ARQUIVO
 vector<PerfilJogador> carregarPerfis() {
 
     vector<PerfilJogador> perfis;
+    try{
     ifstream arquivo("ranking.txt");//carregar o perfil nesse aruivo
 
     if(!arquivo.is_open()) {//se nao foi aberto
@@ -809,6 +826,12 @@ vector<PerfilJogador> carregarPerfis() {
     }
 
     arquivo.close();
+    cout << " Ranking salvo com sucesso! \n";
+
+    }catch(exception& e) {
+        cout << " Erro ao carregar ranking " << e.what() << endl;//tive que pesuisar como usar try catch
+    }
+
     return perfis;
 }
 
@@ -852,18 +875,125 @@ void limparTela() {
 // LER A COORDENADA
 int lerCoordenada() {
     int num;
-    while (true)
-    {
-        if (cin >> num)
-        {
-            if(num >= 0 && num <= 7) return num;
-            cout << "Digite um numero entre 0 e 7: ";
-        }
-        else
-        {
-            cout << "Digite apenas numeros: ";
+    
+    while (true) {
+        try {
+            if (cin >> num) {
+                if(num >= 0 && num <= 7) {
+                    return num;
+                }
+                cout << "Digite um numero entre 0 e 7: ";
+            } else {
+                //se digitar letra ao inves de numero
+                throw runtime_error("Entrada invalida!");
+            }
+        } catch(exception& e) {
+            cout << e.what() << " Digite apenas numeros: ";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
     }
+}
+
+// REGISTRAR JOGADAS
+void registrarJogada(Jogo& jogo, int x1, int y1, int x2, int y2, char jogador, bool captura) {
+    Jogada jogada;
+    jogada.rodada = jogo.historico.size() + 1;
+    jogada.jogador = jogador;
+    jogada.x1 = x1;
+    jogada.y1 = y1;
+    jogada.x2 = x2;
+    jogada.y2 = y2;
+    jogada.foi_captura = captura;
+    
+    jogo.historico.push_back(jogada);
+}
+
+// EXIBIR O HISTORICO
+void exibirHistorico(const Jogo& jogo) {
+    limparTela();
+    
+    cout << "====================================\n";
+    cout << "        HISTORICO DE JOGADAS\n";
+    cout << "====================================\n";
+    
+    if(jogo.historico.empty()) {
+        cout << "Nenhuma jogada registrada!\n";
+    } else {
+        cout << "Roda | Jogador | De    | Para  | Captura\n";
+        cout << "====================================\n";
+        
+        for(const auto& jogada : jogo.historico) {
+            cout << jogada.rodada << "    | " 
+                 << jogada.jogador << "       | " 
+                 << jogada.x1 << "," << jogada.y1 << "  | "
+                 << jogada.x2 << "," << jogada.y2 << "  | "
+                 << (jogada.foi_captura ? "SIM" : "NAO") 
+                 << endl;
+        }
+    }
+    
+    cout << "====================================\n";
+    cout << "\nPressione ENTER...";
+    cin.ignore();
+    cin.get();
+}
+
+// SALVAR O HISTORICO DA PARTIDA
+void salvarHistoricoPartida(const Jogo& jogo, const string& nomeVencedor) {
+    try {
+        string nomeArquivo = "historico_" + nomeVencedor + ".txt";
+        ofstream arquivo(nomeArquivo);
+        
+        if(!arquivo.is_open()) {
+            throw runtime_error("Nao conseguiu salvar historico!");
+        }
+        
+        arquivo << "HISTORICO DE PARTIDA - " << nomeVencedor << endl;
+        arquivo << "====================================\n";
+        
+        for(const auto& jogada : jogo.historico) {
+            arquivo << jogada.rodada << ". " 
+                    << jogada.jogador << " " 
+                    << "(" << jogada.x1 << "," << jogada.y1 << ") -> "
+                    << "(" << jogada.x2 << "," << jogada.y2 << ") "
+                    << (jogada.foi_captura ? "[CAPTURA]" : "") 
+                    << endl;
+        }
+        
+        arquivo.close();
+        cout << " Historico salvo em: " << nomeArquivo << endl;
+        
+        exibirHistorico(jogo);
+        
+    } catch(exception& e) {
+        cout << " Erro ao salvar historico: " << e.what() << endl;
+    }
+}
+
+//carregar e exibir o historico
+void carregarEExibirHistorico(const string& nomeJogador) {
+    limparTela();
+    
+    string nomeArquivo = "historico_" + nomeJogador + ".txt";
+    ifstream arquivo(nomeArquivo);
+    
+    cout << "====================================\n";
+    cout << "        HISTORICO DE JOGADAS\n";
+    cout << "====================================\n";
+    
+    if(!arquivo.is_open()) {
+        cout << "Nao houve nenhuma jogada do jogador: " << nomeJogador << endl;
+    } else {
+        string linha;
+        while(getline(arquivo, linha)) {
+            cout << linha << endl;
+        }
+        arquivo.close();
+    }
+    
+    cout << "====================================\n";
+    cout << "\nPressione ENTER...";
+    cin.ignore();
+    cin.get();
 }
