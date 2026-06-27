@@ -7,6 +7,9 @@
 ![Status](https://img.shields.io/badge/status-Completo-brightgreen.svg)
 
 ## Descrição
+## Avaliação
+
+Este é o **Projeto Final da Unidade 3** da disciplina de Algoritmos e Programação.
 
 > **Nota:** Este projeto contou com auxílio de IA para formatação, correção de erros, dúvidas técnicas e melhorias gerais. O código foi desenvolvido manualmente pelo autor.
 
