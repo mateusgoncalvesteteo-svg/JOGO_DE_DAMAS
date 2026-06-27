@@ -32,17 +32,19 @@ char menu()
         cout << "[1] PLAY\n";
         cout << "[2] RANKING\n";
         cout << "[3] HISTORICO\n";
+        cout << "[4] REGRAS\n";
+        cout << "[5] CREDITOS\n";
         cout << "[0] SAIR\n";
         cout << "Opcao: ";
 
         cin >> opcao;
 
-        if(opcao != '1' && opcao != '2' && opcao != '3' && opcao != '0')
+        if(opcao != '1' && opcao != '2' && opcao != '3' && opcao != '4' && opcao != '5' && opcao != '0')
         {
             cout << "\nOpcao invalida!\n";
         }
 
-    } while(opcao != '1' && opcao != '2' && opcao != '3' && opcao != '0');
+    } while(opcao != '1' && opcao != '2' && opcao != '3' && opcao != '4' && opcao != '5' && opcao != '0');
 
     return opcao;
 }
@@ -971,28 +973,138 @@ void salvarHistoricoPartida(const Jogo& jogo, const string& nomeVencedor) {
     }
 }
 
-//carregar e exibir o historico
+// BUBBLE SORT - ORDENA RANKING POR VITÓRIAS (DECRESCENTE)
+void ordenaRankingPorVitorias(vector<PerfilJogador>& perfis)
+{
+    for(int i = 0; i < perfis.size() - 1; i++)
+    {
+        for(int j = 0; j < perfis.size() - i - 1; j++)
+        {
+            if(perfis[j].vitorias < perfis[j + 1].vitorias)
+            {
+                swap(perfis[j], perfis[j + 1]);
+            }
+        }
+    }
+}
+
+// BUSCA BINÁRIA - PROCURA JOGADOR NO RANKING
+int buscaBinaria(const vector<PerfilJogador>& perfis, const string& nome)
+{
+    int esq = 0;
+    int dir = perfis.size() - 1;
+    
+    while(esq <= dir)
+    {
+        int meio = (esq + dir) / 2;
+        
+        if(perfis[meio].nome == nome)
+        {
+            return meio;
+        }
+        else if(perfis[meio].nome < nome)
+        {
+            esq = meio + 1;
+        }
+        else
+        {
+            dir = meio - 1;
+        }
+    }
+    
+    return -1;
+}
+
+//CARREGA E EXIBE HISTÓRICO COM BUSCA BINÁRIA
 void carregarEExibirHistorico(const string& nomeJogador) {
     limparTela();
     
-    string nomeArquivo = "historico_" + nomeJogador + ".txt";
-    ifstream arquivo(nomeArquivo);
+    vector<PerfilJogador> perfis = carregarPerfis();
+    
+    ordenaRankingPorVitorias(perfis);
+    
+    int posicao = buscaBinaria(perfis, nomeJogador);
     
     cout << "====================================\n";
     cout << "        HISTORICO DE JOGADAS\n";
     cout << "====================================\n";
     
-    if(!arquivo.is_open()) {
+    if(posicao == -1) {
         cout << "Nao houve nenhuma jogada do jogador: " << nomeJogador << endl;
     } else {
-        string linha;
-        while(getline(arquivo, linha)) {
-            cout << linha << endl;
+        string nomeArquivo = "historico_" + nomeJogador + ".txt";
+        ifstream arquivo(nomeArquivo);
+        
+        if(!arquivo.is_open()) {
+            cout << "Nao houve nenhuma jogada do jogador: " << nomeJogador << endl;
+        } else {
+            string linha;
+            while(getline(arquivo, linha)) {
+                cout << linha << endl;
+            }
+            arquivo.close();
         }
-        arquivo.close();
     }
     
     cout << "====================================\n";
+    cout << "\nPressione ENTER...";
+    cin.ignore();
+    cin.get();
+}
+
+//REGRAS
+void exibirRegras() {
+    limparTela();
+    
+    cout << "====================================\n";
+    cout << "         REGRAS DO JOGO\n";
+    cout << "====================================\n";
+    cout << "\n1. OBJETIVO\n";
+    cout << "   Capturar ou bloquear todas as pecas do adversario\n";
+    cout << "\n2. MOVIMENTO\n";
+    cout << "   - Pecas andam 1 casa na diagonal para frente\n";
+    cout << "   - Damas andam qualquer distancia na diagonal\n";
+    cout << "   - Brancas descem (linha 7 -> 0)\n";
+    cout << "   - Pretas sobem (linha 0 -> 7)\n";
+    cout << "\n3. CAPTURA\n";
+    cout << "   - Pule sobre peca do adversario para capturar\n";
+    cout << "   - Captura e obrigatoria se disponivel\n";
+    cout << "   - Pode fazer multiplas capturas em um turno\n";
+    cout << "\n4. PROMOCAO\n";
+    cout << "   - Peca chega na linha oposta vira DAMA\n";
+    cout << "   - Dama se move em todas as direcoes\n";
+    cout << "\n5. FIM DE JOGO\n";
+    cout << "   - Quem perder todas as pecas perde\n";
+    cout << "   - Quem ficar travado (sem movimento) perde\n";
+    cout << "   - Jogador pode desistir a qualquer momento\n";
+    cout << "\n6. COMENTARIOS ADICIONAIS\n";
+    cout << "   - so pode comer pra frente\n";
+    cout << "   - nao existe empate, caso o jogo trave quem tiver mais pecas ganha\n";
+    cout << "\n====================================\n";
+    cout << "\nPressione ENTER...";
+    cin.ignore();
+    cin.get();
+}
+
+//CREDITOS
+void exibirCreditos() {
+    limparTela();
+    
+    cout << "====================================\n";
+    cout << "           CREDITOS\n";
+    cout << "====================================\n";
+    cout << "\nJOGO DE DAMAS - PROJETO FINAL TADS\n";
+    cout << "\nDesenvolvido por:\n";
+    cout << "- [Mateus Goncalves Teteo]\n";
+    cout << "- [Pablo Alves]\n";
+    cout << "\nCurso: Tecnologia em Analise e Desenvolvimento de Sistemas\n";
+    cout << "Instituicao: UFRN - Universidade Federal do Rio Grande do Norte\n";
+    cout << "\nTecnologias utilizadas:\n";
+    cout << "- C++\n";
+    cout << "- STL (Vector)\n";
+    cout << "- Persistencia de arquivos (ASCII)\n";
+    cout << "- Algoritmos de ordenacao e busca\n";
+    cout << "\n====================================\n";
     cout << "\nPressione ENTER...";
     cin.ignore();
     cin.get();
