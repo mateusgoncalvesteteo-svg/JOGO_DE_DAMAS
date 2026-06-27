@@ -30,6 +30,15 @@ int main() {
                 carregarEExibirHistorico(nomeJogador);
                 break;
             }
+
+            case '4':
+                exibirRegras();
+                break;
+
+            case '5':
+                exibirCreditos();
+                break;
+            
                 
             case '0':
                 cout << "\nEncerrando jogo...\n";
