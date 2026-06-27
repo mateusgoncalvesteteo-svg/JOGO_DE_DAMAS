@@ -364,11 +364,8 @@ https://github.com/mateusgoncalvesteteo-svg/JOGO_DE_DAMAS/issues
 
 ## Agradecimentos
 
-- Professora/Professor pela orientação
+- Professor josenalde pela orientação
 - Colegas por feedback e testes
-- Comunidade C++ por recursos e documentação
-
----
 
 **Última atualização:** junho/2026
 
