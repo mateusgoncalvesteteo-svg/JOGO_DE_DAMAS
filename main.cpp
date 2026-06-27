@@ -3,7 +3,7 @@
 using namespace std;
 
 int main() {
-    vector<PerfilJogador> perfis = carregarPerfis(); // Carregar ranking
+    vector<PerfilJogador> perfis = carregarPerfis();
     
     char opcaoEscolhida;
     
@@ -14,13 +14,22 @@ int main() {
         {
             case '1':
                 jogar(perfis);
-                perfis = carregarPerfis(); // Recarregar após partida
+                perfis = carregarPerfis();
                 salvarPerfis(perfis);
                 break;
                 
             case '2':
                 exibirRanking(perfis);
                 break;
+            
+            case '3':
+            {
+                string nomeJogador;
+                cout << "Digite o nome do jogador: ";
+                cin >> nomeJogador;
+                carregarEExibirHistorico(nomeJogador);
+                break;
+            }
                 
             case '0':
                 cout << "\nEncerrando jogo...\n";
